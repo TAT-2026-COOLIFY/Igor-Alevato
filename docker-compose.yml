@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: estoque_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./Backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/estoque_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
+    depends_on:
+      - db
+
+  frontend:
+    build: ./Frontend
+    ports:
+      - "80"
+
+volumes:
+  db_data:
