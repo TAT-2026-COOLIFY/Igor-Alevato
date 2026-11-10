@@ -1,0 +1,48 @@
+<div class="pagina-escura">
+  
+  <div class="cabecalho-pagina">
+    <h3 class="titulo-pagina">
+      <i class="pi pi-book text-info"></i>
+      <span>Relatório de Movimentações</span>
+    </h3>
+    
+    <button class="btn btn-exportar" (click)="exportarPdfMovimentacoes()" [disabled]="movimentacoes.length === 0">
+      <i class="pi pi-file-pdf me-1"></i> Exportar
+    </button>
+  </div>
+  
+  <div class="card-tabela shadow-sm">
+    <table class="table table-borderless table-hover table-dark-custom mb-0 text-center">
+      <thead>
+        <tr>
+          <th>Data e Hora</th>
+          <th>Tipo</th>
+          <th>Produto</th>
+          <th>Quantidade</th>
+          <th>Usuário (Responsável)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let mov of movimentacoes">
+          <td class="texto-cinza">{{ mov.dataHora | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <span class="badge-status" [ngClass]="mov.tipoMovimentacao === 'ENTRADA' ? 'entrada' : 'saida'">
+              <i class="pi" [ngClass]="mov.tipoMovimentacao === 'ENTRADA' ? 'pi-arrow-down' : 'pi-arrow-up'"></i>
+              {{ mov.tipoMovimentacao }}
+            </span>
+          </td>
+          <td class="fw-bold text-white">{{ mov.produto?.nome || 'N/A' }}</td>
+          <td class="fw-bold text-white">{{ mov.quantidade }}</td>
+          <td class="texto-cinza">{{ mov.usuario?.nome || 'Sistema' }}</td>
+        </tr>
+
+        <tr *ngIf="movimentacoes.length === 0">
+          <td colspan="5" class="sem-resultados">
+            <span>Nenhuma movimentação registrada no sistema até o momento.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

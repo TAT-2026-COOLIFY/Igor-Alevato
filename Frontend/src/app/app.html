@@ -1,0 +1,80 @@
+<div class="layout-principal">
+  
+  <div *ngIf="mostrarMenu" class="sidebar-escura">
+    
+    <a href="#" class="titulo-sistema">
+      <span>Controle de Estoque</span>
+    </a>
+    
+    <div class="usuario-logado-box">
+      <span class="nome-usuario">
+        {{ usuarioLogado?.nome || 'Visitante' }}
+      </span>
+    </div>
+    
+    <hr class="divisor-escuro">
+    
+    <ul class="menu-lista">
+      <li class="mb-1" *ngIf="ehAdministrador">
+        <a routerLink="/visao-geral" routerLinkActive="menu-item-ativo" class="nav-link">
+          <i class="pi pi-th-large"></i>
+          <span>Visão Geral</span>
+        </a>
+      </li>
+      
+      <li class="mb-1">
+        <a routerLink="/categorias" routerLinkActive="menu-item-ativo" class="nav-link">
+          <i class="pi pi-warehouse"></i>
+          <span>Estoque</span>
+        </a>
+      </li>
+      
+      <li class="mb-1" *ngIf="ehAdministrador">
+        <a routerLink="/produtos" routerLinkActive="menu-item-ativo" class="nav-link">
+          <i class="pi pi-cog"></i>
+          <span>Gerenciar Produtos</span>
+        </a>
+      </li>
+      
+      <li class="mb-1">
+        <a routerLink="/movimentacoes" routerLinkActive="menu-item-ativo" class="nav-link">
+          <i class="pi pi-shopping-cart"></i>
+          <span>Movimentações</span>
+        </a>
+      </li>
+      
+      <li class="mb-1" *ngIf="ehAdministrador">
+        <a routerLink="/alertas" routerLinkActive="menu-item-ativo" class="nav-link">
+          <i class="pi pi-bell"></i>
+          <span>Alertas</span>
+        </a>
+      </li>
+      
+      <li class="mb-1" *ngIf="ehAdministrador">
+        <a routerLink="/relatorios" routerLinkActive="menu-item-ativo" class="nav-link">
+          <i class="pi pi-book"></i>
+          <span>Relatórios</span>
+        </a>
+      </li>
+      
+      <li class="mb-1" *ngIf="ehAdministrador">
+        <a routerLink="/usuarios" routerLinkActive="menu-item-ativo" class="nav-link">
+          <i class="pi pi-users"></i>
+          <span>Usuários</span>
+        </a>
+      </li>
+    </ul>
+    
+    <hr class="divisor-escuro">
+    
+    <button (click)="sair()" class="btn btn-sair-menu">
+      <i class="pi pi-sign-out"></i>
+      <span>Sair do Sistema</span>
+    </button>
+  </div>
+  
+  <div class="area-conteudo">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

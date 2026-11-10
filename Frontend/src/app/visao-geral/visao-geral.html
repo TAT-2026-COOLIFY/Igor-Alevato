@@ -1,0 +1,87 @@
+<div class="pagina-escura">
+  
+  <div class="mb-4 d-flex align-items-center">
+    <i class="pi pi-th-large fs-4 me-3 texto-ambar"></i>
+    <div>
+      <h3 class="titulo-pagina">Visão Geral do Estoque</h3>
+      <span class="texto-id small">{{ dataAtual | date:'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+
+  <p class="subtitulo-secao">Indicadores</p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card-indicador laranja">
+        <i class="pi pi-box icone"></i>
+        <span class="rotulo">Produtos Cadastrados</span>
+        <strong class="valor">{{ totalProdutos }}</strong>
+        <small class="detalhe">produtos no sistema</small>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card-indicador azul">
+        <i class="pi pi-home icone"></i>
+        <span class="rotulo">Total Físico no Estoque</span>
+        <strong class="valor">{{ totalEstoqueFisico }}</strong>
+        <small class="detalhe">unidades disponíveis</small>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card-indicador verde">
+        <i class="pi pi-tags icone"></i>
+        <span class="rotulo">Categorias Ativas</span>
+        <strong class="valor">{{ totalCategorias }}</strong>
+        <small class="detalhe">categorias em uso</small>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card-indicador vermelho">
+        <i class="pi pi-exclamation-triangle icone"></i>
+        <span class="rotulo">Estoque Baixo</span>
+        <strong class="valor">{{ alertasCriticos }}</strong>
+        <small class="detalhe">produtos críticos</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card-indicador laranja">
+        <i class="pi pi-money-bill icone"></i>
+        <span class="rotulo">Valor Total no Estoque</span>
+        <strong class="valor">{{ valorTotalFormatado }}</strong>
+        <small class="detalhe">valor estimado físico</small>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-indicador azul">
+        <i class="pi pi-chart-line icone"></i>
+        <span class="rotulo">Total Valor Vendido</span>
+        <strong class="valor">{{ valorVendidoAno }}</strong>
+        <small class="detalhe">acumulado no ano</small>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-indicador verde">
+        <i class="pi pi-calendar icone"></i>
+        <span class="rotulo">Vendido no Mês</span>
+        <strong class="valor">{{ valorVendidoMes }}</strong>
+        <small class="detalhe">mês atual</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-tabela p-4 mt-2">
+    <h5 class="fw-bold text-white mb-3">Entradas e Saídas</h5>
+    <div class="container-grafico">
+      <canvas id="graficoVendas"></canvas>
+    </div>
+  </div>
+
+</div>

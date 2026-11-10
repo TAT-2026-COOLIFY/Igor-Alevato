@@ -1,0 +1,245 @@
+<div *ngIf="telaAtual === 'lista'" class="pagina-escura">
+  
+  <div class="cabecalho-pagina">
+    <h3 class="titulo-pagina">
+      <i class="pi pi-cog text-white"></i>
+      <span>Gerenciar Produtos</span>
+    </h3>
+    
+    <div class="barra-filtros">
+      <div class="input-group" style="width: auto;">
+        <span class="input-group-text icone-filtro">
+          <i class="pi pi-filter"></i>
+        </span>
+        <select class="form-select dark-input" [(ngModel)]="filtroCategoria">
+          <option value="">Todas as Categorias</option>
+          <option *ngFor="let cat of categoriasDisponiveis" [value]="cat.nome">{{ cat.nome }}</option>
+        </select>
+      </div>
+
+      <input
+        type="text"
+        class="form-control dark-input"
+        placeholder="Buscar por nome..."
+        [(ngModel)]="filtroNome"
+        style="width: 220px;"
+      >
+
+      <div class="input-group" style="width: 120px;">
+        <span class="input-group-text label-id">ID</span>
+        <input
+          type="text"
+          class="form-control dark-input text-center"
+          placeholder="Nº..."
+          [(ngModel)]="filtroId"
+        >
+      </div>
+
+      <button
+        class="btn btn-novo ms-2 shadow-sm"
+        type="button"
+        (click)="abrirNovo()"
+      >
+        + Cadastrar Novo
+      </button>
+    </div>
+  </div>
+
+  <div class="card-tabela shadow-sm">
+    <table class="table table-borderless table-hover table-dark-custom mb-0 text-center">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th class="text-start">Nome do Produto</th>
+          <th>Categoria</th>
+          <th>Unidade</th>
+          <th>Mínimo</th>
+          <th>Preço</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of produtosFiltrados">
+          <td class="texto-id">#{{ p.id }}</td>
+          <td class="text-start fw-bold text-white">{{ p.nome }}</td>
+          <td class="texto-cinza">{{ p.categoria ? p.categoria.nome : 'Sem Categoria' }}</td>
+          <td class="texto-cinza">{{ p.tipoUnidade }}</td>
+          <td class="texto-cinza">{{ p.estoqueMinimo }}</td>
+          <td class="fw-bold texto-ambar">R$ {{ p.precoVenda }}</td>
+          <td>
+            <button
+              class="btn btn-sm btn-acao editar me-2"
+              type="button"
+              title="Editar"
+              (click)="abrirEditar(p)"
+            >
+              <i class="pi pi-pencil"></i>
+            </button>
+            
+            <button
+              class="btn btn-sm btn-acao excluir"
+              type="button"
+              title="Excluir"
+              (click)="abrirModalExcluir(p)"
+            >
+              <i class="pi pi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="produtosFiltrados.length === 0">
+          <td colspan="7" class="sem-resultados">
+            <i class="pi pi-search mb-2 fs-3 d-block"></i>
+            <span>Nenhum produto encontrado com esses filtros.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div *ngIf="telaAtual === 'formulario'" class="container-formulario">
+  <div class="card-formulario shadow-lg">
+    
+    <div class="cabecalho-formulario">
+      <h4 class="mb-0 text-white fw-bold">
+        <i class="pi pi-box me-2 text-success"></i>
+        <span>{{ produtoAtual.id ? 'Editar Produto #' + produtoAtual.id : 'Cadastrar Novo Produto' }}</span>
+      </h4>
+    </div>
+    
+    <div class="p-4">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-white">Nome do Produto</label>
+          <input
+            type="text"
+            class="form-control dark-input"
+            [(ngModel)]="produtoAtual.nome"
+          >
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-white">
+            Categoria <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select dark-input"
+            [(ngModel)]="produtoAtual.categoria"
+            [compareWith]="compararCategorias"
+          >
+            <option [ngValue]="null" disabled selected>Selecione uma categoria...</option>
+            <option *ngFor="let cat of categoriasDisponiveis" [ngValue]="cat">{{ cat.nome }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4 mt-4">
+          <label class="form-label fw-bold text-white">Unidade de Medida</label>
+          <input
+            type="text"
+            class="form-control dark-input"
+            [(ngModel)]="produtoAtual.tipoUnidade"
+          >
+        </div>
+
+        <div class="col-md-4 mt-4">
+          <label class="form-label fw-bold text-white">Preço de Venda (R$)</label>
+          <input
+            type="number"
+            class="form-control dark-input"
+            placeholder="0.00"
+            [(ngModel)]="produtoAtual.precoVenda"
+            min="0"
+          >
+        </div>
+
+        <div class="col-md-4 mt-4">
+          <label class="form-label fw-bold text-white">Estoque Mínimo</label>
+          <input
+            type="number"
+            class="form-control dark-input"
+            [(ngModel)]="produtoAtual.estoqueMinimo"
+            min="0"
+          >
+        </div>
+      </div>
+      
+      <hr class="divisor-escuro my-4">
+
+      <div class="d-flex justify-content-end gap-3">
+        <button
+          class="btn btn-cancelar"
+          type="button"
+          (click)="voltar()"
+        >
+          <i class="pi pi-times me-2"></i>
+          <span>Cancelar</span>
+        </button>
+        <button
+          class="btn btn-salvar"
+          type="button"
+          (click)="salvarProduto()"
+          [disabled]="!produtoAtual.nome || !produtoAtual.categoria"
+        >
+          <i class="pi pi-check me-2"></i>
+          <span>Salvar Produto</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal fade show modal-fundo" tabindex="-1" *ngIf="exibirModalExclusao">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-escuro shadow-lg">
+      
+      <div class="modal-cabecalho">
+        <h5 class="mb-0 fw-bold text-white d-flex align-items-center">
+          <i class="pi pi-exclamation-triangle me-2 text-danger"></i>
+          <span>Confirmar Exclusão</span>
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="fecharModalExclusao()"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4 text-center">
+        <div *ngIf="!erroExclusao">
+          <p class="fs-6 mb-2">
+            Tem certeza que deseja excluir o produto <strong class="text-white">"{{ produtoParaExcluir?.nome }}"</strong>?
+          </p>
+          <small class="texto-cinza">Esta ação removerá o item permanentemente do estoque.</small>
+        </div>
+
+        <div *ngIf="erroExclusao" class="alerta-bloqueio">
+          <i class="pi pi-times-circle fs-3 mb-2 d-block"></i>
+          <span class="fw-bold">{{ erroExclusao }}</span>
+        </div>
+      </div>
+
+      <div class="modal-rodape">
+        <button
+          type="button"
+          class="btn btn-cancelar"
+          (click)="fecharModalExclusao()"
+        >
+          {{ erroExclusao ? 'Fechar' : 'Cancelar' }}
+        </button>
+        <button
+          *ngIf="!erroExclusao"
+          type="button"
+          class="btn btn-confirmar-exclusao"
+          (click)="confirmarExclusao()"
+        >
+          <i class="pi pi-trash me-2"></i>
+          <span>Excluir</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

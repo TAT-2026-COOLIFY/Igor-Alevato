@@ -1,0 +1,201 @@
+<div *ngIf="telaAtual === 'lista'" class="pagina-escura">
+  
+  <div class="cabecalho-pagina">
+    <h3 class="titulo-pagina">
+      <i class="pi pi-users text-white"></i>
+      <span>Gerenciar Usuários</span>
+    </h3>
+    
+    <button
+      class="btn btn-novo shadow-sm"
+      type="button"
+      (click)="abrirNovo()"
+    >
+      <i class="pi pi-user-plus me-2"></i>
+      <span>Novo Usuário</span>
+    </button>
+  </div>
+
+  <div class="card-tabela shadow-sm">
+    <table class="table table-borderless table-hover table-dark-custom mb-0 text-center">
+      <thead>
+        <tr>
+          <th class="ps-4">ID</th>
+          <th class="text-start">Nome Completo</th>
+          <th>Login (Usuário)</th>
+          <th>Cargo</th>
+          <th>Status</th>
+          <th class="pe-4">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of usuariosDisponiveis">
+          <td class="ps-4 texto-id">#{{ u.id }}</td>
+          <td class="text-start fw-bold text-white">{{ u.nome }}</td>
+          <td class="texto-cinza">{{ u.usuario }}</td>
+          
+          <td>
+            <span class="badge-cargo" [ngClass]="ehAdmin(u) ? 'admin' : 'funcionario'">
+              {{ ehAdmin(u) ? 'Administrador' : 'Funcionário' }}
+            </span>
+          </td>
+
+          <td>
+            <span class="badge-status" [ngClass]="u.ativo !== false ? 'ativo' : 'inativo'">
+              {{ u.ativo !== false ? 'Ativo' : 'Inativo' }}
+            </span>
+          </td>
+
+          <td class="pe-4">
+            <button
+              class="btn btn-sm btn-acao editar"
+              type="button"
+              title="Editar"
+              (click)="abrirEditar(u)"
+            >
+              <i class="pi pi-pencil"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="usuariosDisponiveis.length === 0">
+          <td colspan="6" class="sem-resultados">
+            <span>Nenhum usuário encontrado.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div *ngIf="telaAtual === 'formulario'" class="container-formulario">
+  <div class="card-formulario shadow-lg" style="max-width: 650px;">
+    
+    <div class="cabecalho-formulario">
+      <h4 class="mb-0 text-white fw-bold">
+        <i class="pi pi-user-edit me-2 text-info"></i>
+        <span>{{ usuarioAtual.id ? 'Editar Usuário #' + usuarioAtual.id : 'Cadastrar Novo Usuário' }}</span>
+      </h4>
+    </div>
+    
+    <div class="p-4">
+      <div class="row g-3">
+        
+        <div class="col-md-12">
+          <label class="form-label fw-bold text-white">
+            Nome Completo <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text dark-input border-end-0 texto-id">
+              <i class="pi pi-id-card"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control dark-input border-start-0 ps-0"
+              [(ngModel)]="usuarioAtual.nome"
+              placeholder="Ex: João da Silva"
+            >
+          </div>
+        </div>
+
+        <div class="col-md-6 mt-3">
+          <label class="form-label fw-bold text-white">
+            Login <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text dark-input border-end-0 texto-id">
+              <i class="pi pi-user"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control dark-input border-start-0 ps-0"
+              [(ngModel)]="usuarioAtual.usuario"
+              placeholder="Ex: joao.silva"
+            >
+          </div>
+        </div>
+
+        <div class="col-md-6 mt-3">
+          <label class="form-label fw-bold text-white">
+            Senha <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text dark-input border-end-0 texto-id">
+              <i class="pi pi-lock"></i>
+            </span>
+            <input
+              [type]="mostrarSenha ? 'text' : 'password'"
+              class="form-control dark-input border-start-0 border-end-0 ps-0"
+              [(ngModel)]="usuarioAtual.senha"
+              placeholder="Digite a senha"
+            >
+            <button
+              class="btn dark-input border-start-0 texto-id"
+              type="button"
+              (click)="mostrarSenha = !mostrarSenha"
+              tabindex="-1"
+            >
+              <i class="pi" [ngClass]="mostrarSenha ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <ng-container *ngIf="usuarioAtual.usuario !== 'admin'">
+          <div class="col-md-6 mt-4">
+            <label class="form-label fw-bold text-white">
+              Cargo <span class="text-danger">*</span>
+            </label>
+            <select class="form-select dark-input" [(ngModel)]="usuarioAtual.cargo">
+              <option value="Funcionário">Funcionário</option>
+              <option value="Administrador">Administrador</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 mt-4">
+            <label class="form-label fw-bold text-white">
+              Status <span class="text-danger">*</span>
+            </label>
+            <select class="form-select dark-input" [(ngModel)]="usuarioAtual.ativo">
+              <option [ngValue]="true">Ativo</option>
+              <option [ngValue]="false">Inativo</option>
+            </select>
+          </div>
+        </ng-container>
+
+        <div class="col-md-12 mt-4" *ngIf="usuarioAtual.usuario === 'admin'">
+          <div class="aviso-admin-padrao mt-2">
+            <i class="pi pi-lock fs-1 mb-3 text-info d-block"></i>
+            <h5 class="fw-bold mb-2">Administrador Padrão</h5>
+            <p class="mb-0 texto-cinza">
+              Este usuário é o responsável principal pelo sistema. O cargo e o status não podem ser alterados.
+            </p>
+          </div>
+        </div>
+
+      </div>
+      
+      <hr class="divisor-escuro my-4">
+
+      <div class="d-flex justify-content-end gap-3">
+        <button
+          class="btn btn-cancelar"
+          type="button"
+          (click)="voltar()"
+        >
+          <i class="pi pi-times me-2"></i>
+          <span>Cancelar</span>
+        </button>
+        <button
+          class="btn btn-salvar"
+          type="button"
+          (click)="salvarUsuario()"
+          [disabled]="!usuarioAtual.nome || !usuarioAtual.usuario || !usuarioAtual.senha"
+        >
+          <i class="pi pi-check me-2"></i>
+          <span>Salvar Usuário</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="tela-login-fundo">
+  
+  <div class="card-login shadow-lg">
+    <div class="mb-4">
+      <div class="logo-circulo-login shadow-sm">
+        <i class="pi pi-box texto-ambar fs-2"></i>
+      </div>
+      <h3 class="fw-bold text-white">Controle de Estoque</h3>
+      <p class="texto-id small">Faça login para acessar o sistema</p>
+    </div>
+
+    <div class="alert py-2 border-0 mb-4 alerta-erro-login" *ngIf="erroLogin">
+      <i class="pi pi-exclamation-circle me-2"></i>
+      <span>Usuário ou senha incorretos!</span>
+    </div>
+
+    <div class="campo-login">
+      <label class="label-login">Usuário</label>
+      <div class="input-group">
+        <span class="input-group-text dark-input border-end-0 texto-id">
+          <i class="pi pi-user"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control dark-input border-start-0 ps-0"
+          [(ngModel)]="usuario"
+          placeholder="Digite seu usuário"
+          (keyup.enter)="fazerLogin()"
+        >
+      </div>
+    </div>
+
+    <div class="campo-login mb-4">
+      <label class="label-login">Senha</label>
+      <div class="input-group">
+        <span class="input-group-text dark-input border-end-0 texto-id">
+          <i class="pi pi-lock"></i>
+        </span>
+        <input
+          [type]="mostrarSenha ? 'text' : 'password'"
+          class="form-control dark-input border-start-0 border-end-0 ps-0"
+          [(ngModel)]="senha"
+          placeholder="Digite sua senha"
+          (keyup.enter)="fazerLogin()"
+        >
+        <button
+          class="btn dark-input border-start-0 texto-id"
+          type="button"
+          (click)="mostrarSenha = !mostrarSenha"
+          tabindex="-1"
+        >
+          <i class="pi" [ngClass]="mostrarSenha ? 'pi-eye-slash' : 'pi-eye'"></i>
+        </button>
+      </div>
+    </div>
+
+    <button
+      class="btn btn-entrar"
+      (click)="fazerLogin()"
+      [disabled]="!usuario || !senha"
+    >
+      Entrar
+    </button>
+  </div>
+
+</div>

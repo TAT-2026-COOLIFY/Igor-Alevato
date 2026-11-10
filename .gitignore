@@ -1,0 +1,6 @@
+# Ignorar pastas de build e dependências
+Backend/target/
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.angular/
+.idea/

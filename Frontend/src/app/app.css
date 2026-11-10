@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body, html {
+  background-color: #0f0f11 !important;
+  color: #e4e4e7 !important;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Força TODOS os links inativos da barra lateral a ficarem cinza clarinho (nunca azul!) */
+.sidebar-link {
+  color: #a1a1aa !important; 
+  border-radius: 8px !important;
+  border-left: 3px solid transparent !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-link:hover {
+  color: #d97706 !important;
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* O item selecionado (Ativo) com o fundo da sua imagem */
+.menu-item-ativo {
+  background-color: #261408 !important; /* Fundo laranja bem escuro */
+  color: #d97706 !important;            /* Texto Laranja */
+  border-left: 3px solid #d97706 !important; /* Bordinha Laranja */
+}
+
+/* Garante que o ícone acompanhe a cor exata do texto */
+.sidebar-link i { color: inherit !important; }
+.menu-item-ativo i { color: #d97706 !important; }
+
+.text-orange-custom {
+  color: #d97706 !important;
+}

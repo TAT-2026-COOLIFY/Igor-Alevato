@@ -1,0 +1,265 @@
+<div class="pagina-escura">
+  
+  <div class="cabecalho-pagina" *ngIf="telaAtual === 'cards'">
+    <h3 class="titulo-pagina">
+      <i class="pi pi-warehouse text-white"></i>
+      <span>Categorias do Estoque</span>
+    </h3>
+  </div>
+
+  <div class="row g-3 mt-1" *ngIf="telaAtual === 'cards'">
+    <div class="col-md-3">
+      <div class="card-categoria shadow-sm" (click)="abrirCatalogo('Todos')">
+        <h4 class="fw-bold text-white mt-2 mb-1">Todos</h4>
+        <span class="small fw-semibold texto-cinza">{{ totalGeralProdutos }} produtos no total</span>
+      </div>
+    </div>
+
+    <div class="col-md-3" *ngFor="let cat of categoriasDisponiveis">
+      <div class="card-categoria shadow-sm" (click)="abrirCatalogo(cat)">
+        
+        <div *ngIf="ehAdministrador" class="opcoes-categoria">
+          <button
+            class="btn-opcoes-categoria"
+            type="button"
+            (click)="alternarMenu(cat, $event)"
+          >
+            <i class="pi pi-ellipsis-v"></i>
+          </button>
+          
+          <ul class="menu-categoria shadow" *ngIf="cat.menuAberto">
+            <li>
+              <a
+                class="item-menu-categoria"
+                href="#"
+                (click)="$event.preventDefault(); abrirModalEditar(cat, $event)"
+              >
+                <i class="pi pi-pencil texto-ambar"></i>
+                <span>Editar</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="item-menu-categoria text-danger"
+                href="#"
+                (click)="$event.preventDefault(); excluirCategoria(cat, $event)"
+              >
+                <i class="pi pi-trash"></i>
+                <span>Excluir</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <h4 class="fw-bold text-white mt-2 mb-1 text-truncate w-100 text-center" [title]="cat.nome">
+          {{ cat.nome }}
+        </h4>
+        <span class="small fw-semibold texto-cinza">{{ cat.quantidadeProdutos || 0 }} produtos</span>
+      </div>
+    </div>
+
+    <div class="col-md-3" *ngIf="ehAdministrador">
+      <div class="card-nova-categoria shadow-sm" (click)="abrirModalNovo()">
+        <i class="pi pi-plus mb-2 fs-4"></i>
+        <h6 class="fw-bold mb-0">Nova Categoria</h6>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="telaAtual === 'catalogo'">
+    <div class="cabecalho-pagina">
+      <div class="d-flex align-items-center gap-3">
+        <button
+          class="btn btn-voltar shadow-sm"
+          type="button"
+          (click)="voltarParaCards()"
+        >
+          <i class="pi pi-arrow-left me-1"></i>
+          <span>Voltar</span>
+        </button>
+        <h3 class="titulo-pagina">
+          <span>Estoque:</span>
+          <span class="texto-ambar">{{ nomeCategoriaAberta }}</span>
+        </h3>
+      </div>
+
+      <div class="barra-filtros">
+        <div class="input-group" style="width: 250px;">
+          <span class="input-group-text dark-input border-end-0 texto-id">
+            <i class="pi pi-search"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control dark-input border-start-0 ps-0"
+            placeholder="Buscar por nome..."
+            [(ngModel)]="termoPesquisa"
+            (ngModelChange)="aplicarFiltros()"
+          >
+        </div>
+
+        <div class="input-group" style="width: 120px;">
+          <span class="input-group-text label-id">ID</span>
+          <input
+            type="number"
+            class="form-control dark-input text-center fw-bold"
+            placeholder="Nº..."
+            [(ngModel)]="idPesquisa"
+            (ngModelChange)="aplicarFiltros()"
+          >
+        </div>
+        
+        <button
+          class="btn btn-exportar shadow-sm"
+          type="button"
+          (click)="exportarPdfCategoria()"
+          [disabled]="produtosExibidosCatalogo.length === 0"
+        >
+          <i class="pi pi-file-pdf me-1"></i>
+          <span>Exportar</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card-tabela shadow-sm">
+      <table class="table table-borderless table-hover table-dark-custom mb-0 text-center">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="text-start">Nome do Produto</th>
+            <th>Unidade</th>
+            <th>Categoria</th>
+            <th>Estoque</th>
+            <th>Preço (R$)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of produtosExibidosCatalogo">
+            <td class="texto-id">#{{ p.id }}</td>
+            <td class="text-start fw-bold text-white">{{ p.nome }}</td>
+            <td class="texto-cinza">{{ p.tipoUnidade || '-' }}</td>
+            <td class="texto-cinza">{{ p.categoria?.nome || '-' }}</td>
+            <td>
+              <span
+                class="badge"
+                [ngClass]="(p.quantidadeAtual || 0) <= (p.estoqueMinimo || 0) ? 'bg-danger' : 'bg-success'"
+              >
+                {{ p.quantidadeAtual || 0 }}
+              </span>
+            </td>
+            <td class="fw-bold texto-ambar">R$ {{ p.precoVenda }}</td>
+          </tr>
+          <tr *ngIf="produtosExibidosCatalogo.length === 0">
+            <td colspan="6" class="sem-resultados">
+              <span>Nenhum produto encontrado.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade show modal-fundo" tabindex="-1" *ngIf="exibirModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-escuro shadow-lg">
+      
+      <div class="modal-cabecalho">
+        <h5 class="mb-0 fw-bold text-white">
+          <i class="pi pi-tag me-2 text-success"></i>
+          <span>{{ modoEdicao ? 'Editar Categoria' : 'Nova Categoria' }}</span>
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="fecharModal()"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <label class="form-label fw-bold text-white">
+          Nome da Categoria <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control dark-input form-control-lg"
+          placeholder="Ex: Eletrônicos, Bebidas..."
+          [(ngModel)]="categoriaAtual.nome"
+          (keyup.enter)="salvarCategoriaModal()"
+        >
+      </div>
+
+      <div class="modal-rodape">
+        <button
+          type="button"
+          class="btn btn-cancelar"
+          (click)="fecharModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-salvar"
+          (click)="salvarCategoriaModal()"
+        >
+          <i class="pi pi-check me-2"></i>
+          <span>Salvar</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show modal-fundo" tabindex="-1" *ngIf="exibirModalExclusao">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-escuro shadow-lg">
+      
+      <div class="modal-cabecalho">
+        <h5 class="mb-0 fw-bold text-white d-flex align-items-center">
+          <i class="pi pi-exclamation-triangle me-2 text-danger"></i>
+          <span>Excluir Categoria</span>
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="fecharModalExclusao()"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4 text-center">
+        <div *ngIf="!erroExclusaoCategoria">
+          <p class="fs-6 mb-2">
+            Tem certeza que deseja excluir a categoria <strong class="text-white">"{{ categoriaParaExcluir?.nome }}"</strong>?
+          </p>
+          <small class="texto-cinza">Esta ação removerá a categoria permanentemente.</small>
+        </div>
+
+        <div *ngIf="erroExclusaoCategoria" class="alerta-bloqueio">
+          <i class="pi pi-times-circle fs-3 mb-2 d-block"></i>
+          <span class="fw-bold">{{ erroExclusaoCategoria }}</span>
+        </div>
+      </div>
+
+      <div class="modal-rodape">
+        <button
+          type="button"
+          class="btn btn-cancelar"
+          (click)="fecharModalExclusao()"
+        >
+          {{ erroExclusaoCategoria ? 'Entendi' : 'Cancelar' }}
+        </button>
+        <button
+          *ngIf="!erroExclusaoCategoria"
+          type="button"
+          class="btn btn-confirmar-exclusao"
+          (click)="confirmarExclusaoCategoria()"
+        >
+          <i class="pi pi-trash me-2"></i>
+          <span>Excluir</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

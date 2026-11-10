@@ -1,0 +1,79 @@
+<div class="pagina-escura">
+  
+  <div class="cabecalho-pagina">
+    <h3 class="titulo-pagina">
+      <i class="pi pi-bell text-danger"></i>
+      <span>Produtos com Estoque Baixo</span>
+    </h3>
+    
+    <div class="barra-filtros">
+      <div class="input-group" style="width: auto;">
+        <span class="input-group-text icone-filtro">
+          <i class="pi pi-filter"></i>
+        </span>
+        <select class="form-select dark-input" [(ngModel)]="filtroCategoria">
+          <option value="">Todas as Categorias</option>
+          <option *ngFor="let cat of categoriasDisponiveis" [value]="cat.nome">{{ cat.nome }}</option>
+        </select>
+      </div>
+
+      <div class="input-group" style="max-width: 240px;">
+        <span class="input-group-text dark-input border-end-0 texto-id">
+          <i class="pi pi-search"></i>
+        </span>
+        <input type="text" class="form-control dark-input border-start-0 ps-0" placeholder="Buscar por nome..." [(ngModel)]="filtroNome">
+      </div>
+
+      <div class="input-group" style="width: 110px;">
+        <span class="input-group-text label-id">ID</span>
+        <input type="text" class="form-control dark-input text-center" placeholder="Nº..." [(ngModel)]="filtroId">
+      </div>
+      
+      <button class="btn btn-exportar" (click)="exportarPdfAlertas()" [disabled]="produtosFiltrados.length === 0">
+        <i class="pi pi-file-pdf me-1"></i> Exportar
+      </button>
+    </div>
+  </div>
+
+  <div class="card-tabela shadow-sm">
+    <table class="table table-borderless table-hover table-dark-custom mb-0 text-center">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th class="text-start">Nome do Produto</th>
+          <th>Categoria</th>
+          <th>Estoque Atual</th>
+          <th>Estoque Mínimo</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of produtosFiltrados">
+          <td class="texto-id">#{{ p.id }}</td>
+          <td class="text-start fw-bold text-white">{{ p.nome }}</td>
+          <td class="texto-cinza">{{ p.categoria?.nome || 'Sem Categoria' }}</td>
+          <td class="fw-bold fs-5 text-danger">{{ p.quantidadeAtual }}</td>
+          <td class="texto-cinza">{{ p.estoqueMinimo }}</td>
+          <td>
+            <span class="badge-status critico">Crítico</span>
+          </td>
+        </tr>
+        
+        <tr *ngIf="produtos.length === 0">
+          <td colspan="6" class="sem-resultados">
+            <i class="pi pi-check-circle mb-2 text-success fs-2 d-block"></i>
+            <span>Tudo sob controle! Nenhum produto com estoque crítico.</span>
+          </td>
+        </tr>
+
+        <tr *ngIf="produtos.length > 0 && produtosFiltrados.length === 0">
+          <td colspan="6" class="sem-resultados">
+            <i class="pi pi-search mb-2 fs-3 d-block"></i>
+            <span>Nenhum alerta encontrado com esses filtros.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

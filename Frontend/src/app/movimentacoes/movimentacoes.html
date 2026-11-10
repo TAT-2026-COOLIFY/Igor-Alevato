@@ -1,0 +1,225 @@
+<div
+  *ngIf="mensagemNotificacao"
+  class="alert shadow-lg position-fixed d-flex align-items-center m-0 text-white toast-notificacao"
+  [ngClass]="tipoNotificacao === 'success' ? 'bg-success' : 'bg-danger'"
+>
+  <i class="pi fs-4 me-3" [ngClass]="tipoNotificacao === 'success' ? 'pi-check-circle' : 'pi-times-circle'"></i>
+  <span class="fw-bold">{{ mensagemNotificacao }}</span>
+</div>
+
+<div *ngIf="telaAtual === 'botoes'" class="pagina-escura">
+  <div class="cabecalho-pagina">
+    <h3 class="titulo-pagina">
+      <i class="pi pi-shopping-cart text-success"></i>
+      <span>Registrar Movimentação de Estoque</span>
+    </h3>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card-atalho-movimentacao entrada shadow-sm" (click)="abrirEntrada()">
+        <i class="pi pi-sign-in mb-3 texto-verde" style="font-size: 3rem;"></i>
+        <h3 class="text-white mb-2 fw-bold">Entrada de Estoque</h3>
+        <p class="texto-cinza mb-0">Registrar chegada de novos itens</p>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card-atalho-movimentacao saida shadow-sm" (click)="abrirSaida()">
+        <i class="pi pi-sign-out mb-3 text-danger" style="font-size: 3rem;"></i>
+        <h3 class="text-white mb-2 fw-bold">Saída de Estoque</h3>
+        <p class="texto-cinza mb-0">Retirar itens</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="telaAtual !== 'botoes'" class="pagina-escura">
+  
+  <div class="cabecalho-pagina">
+    <div class="d-flex align-items-center gap-3">
+      <button
+        class="btn btn-voltar shadow-sm"
+        type="button"
+        (click)="voltar()"
+      >
+        <i class="pi pi-arrow-left me-1"></i>
+        <span>Voltar</span>
+      </button>
+      <h3 class="titulo-pagina">
+        <i class="pi" [ngClass]="telaAtual === 'entrada' ? 'pi-sign-in text-success' : 'pi-sign-out text-danger'"></i>
+        <span>{{ telaAtual === 'entrada' ? 'Recepção de Mercadorias (Entrada)' : 'Caixa (Saída)' }}</span>
+      </h3>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-8">
+      
+      <div class="row g-2 align-items-center barra-filtros-pdv shadow-sm">
+        <div class="col-md-4">
+          <select
+            class="form-select dark-input fw-bold"
+            [(ngModel)]="categoriaSelecionada"
+            (ngModelChange)="aplicarFiltros()"
+          >
+            <option value="Todos">Todas as Categorias</option>
+            <option *ngFor="let cat of categoriasDisponiveis" [value]="cat.nome">{{ cat.nome }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-5">
+          <div class="input-group">
+            <span class="input-group-text dark-input border-end-0 texto-id">
+              <i class="pi pi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control dark-input border-start-0 ps-0"
+              placeholder="Buscar por nome..."
+              [(ngModel)]="termoPesquisa"
+              (ngModelChange)="aplicarFiltros()"
+            >
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="input-group">
+            <span class="input-group-text label-id">ID</span>
+            <input
+              type="number"
+              class="form-control dark-input text-center fw-bold"
+              placeholder="Nº..."
+              [(ngModel)]="idPesquisa"
+              (ngModelChange)="aplicarFiltros()"
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-4" *ngFor="let p of produtosExibidos">
+          <div class="card-produto-pdv shadow-sm" (click)="adicionarAoCarrinho(p)">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="fw-bold text-white mb-0 text-truncate" [title]="p.nome" style="max-width: 65%;">
+                {{ p.nome }}
+              </h5>
+              <span
+                class="badge rounded-pill"
+                [ngClass]="(p.quantidadeAtual || 0) <= (p.estoqueMinimo || 0) ? 'bg-danger' : 'bg-success'"
+              >
+                Estoque: {{ p.quantidadeAtual }}
+              </span>
+            </div>
+            
+            <small class="mb-3 d-block texto-id">
+              <i class="pi pi-tag me-1"></i>
+              <span>{{ p.categoria?.nome || 'Sem categoria' }}</span>
+            </small>
+            
+            <div class="rodape-card-pdv">
+              <h5 class="fw-bold mb-0 texto-ambar">R$ {{ p.precoVenda }}</h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12" *ngIf="produtosExibidos.length === 0">
+          <div class="sem-resultados">
+            <i class="pi pi-search fs-1 mb-3 d-block"></i>
+            <h5>Nenhum produto encontrado</h5>
+            <p class="mb-0">Tente buscar por outro nome ou mude a categoria.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-carrinho shadow-sm">
+        
+        <div class="cabecalho-carrinho" [ngClass]="telaAtual === 'entrada' ? 'entrada' : 'saida'">
+          <h5 class="mb-0 fw-bold">{{ telaAtual === 'entrada' ? 'Nova Entrada' : 'Saída Atual' }}</h5>
+          <span class="badge bg-dark text-white rounded-pill fs-6">{{ totalItens }}</span>
+        </div>
+
+        <div class="corpo-carrinho">
+          <ul class="p-0 m-0">
+            <li class="item-carrinho" *ngFor="let item of carrinho">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="fw-bold text-white">{{ item.produto.nome }}</span>
+                <button
+                  class="btn btn-sm text-danger p-0"
+                  type="button"
+                  (click)="removerDoCarrinho(item)"
+                >
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="small texto-id">
+                  R$ {{ item.produto.precoVenda }} / {{ item.produto.tipoUnidade }}
+                </span>
+                
+                <div class="input-group input-group-sm" style="width: 100px;">
+                  <button
+                    class="btn btn-outline-secondary text-white border-secondary"
+                    type="button"
+                    (click)="diminuirQuantidade(item)"
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center fw-bold px-1 dark-input"
+                    [(ngModel)]="item.quantidade"
+                    (change)="validarQuantidade(item)"
+                    (keyup)="validarQuantidade(item)"
+                    min="1"
+                  >
+                  <button
+                    class="btn btn-outline-secondary text-white border-secondary"
+                    type="button"
+                    (click)="aumentarQuantidade(item)"
+                  >
+                    +
+                  </button>
+                </div>
+                
+                <span class="fw-bold texto-verde">R$ {{ item.produto.precoVenda * item.quantidade }}</span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="sem-resultados" *ngIf="carrinho.length === 0">
+            <i class="pi pi-shopping-cart mb-2 fs-2 d-block"></i>
+            <p class="mb-0">A lista está vazia.</p>
+          </div>
+        </div>
+
+        <div class="rodape-carrinho">
+          <div class="d-flex justify-content-between mb-2 texto-cinza">
+            <span>Subtotal ({{ totalItens }} itens)</span>
+            <span class="fw-bold text-white">R$ {{ totalCarrinho }}</span>
+          </div>
+          <hr class="divisor-escuro my-2">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0 text-white">Total</h4>
+            <h3 class="mb-0 fw-bold texto-verde">R$ {{ totalCarrinho }}</h3>
+          </div>
+          
+          <button
+            class="btn btn-finalizar-pdv shadow-sm"
+            type="button"
+            [ngClass]="telaAtual === 'entrada' ? 'entrada' : 'saida'"
+            [disabled]="carrinho.length === 0"
+            (click)="finalizarMovimentacao()"
+          >
+            <i class="pi pi-check-circle me-2"></i>
+            <span>Finalizar {{ telaAtual === 'entrada' ? 'Entrada' : 'Saída' }}</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
