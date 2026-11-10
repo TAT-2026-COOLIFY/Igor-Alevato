@@ -6,7 +6,7 @@ COPY . .
 RUN npm run build -- --configuration=production
 
 FROM nginx:alpine
-# Atenção: "estoque-frontend" deve ser o nome exato do seu projeto Angular no angular.json
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/estoque-frontend/browser /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
