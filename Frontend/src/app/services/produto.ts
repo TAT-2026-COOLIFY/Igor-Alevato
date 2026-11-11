@@ -16,8 +16,8 @@ export interface Produto {
   providedIn: 'root'
 })
 export class ProdutoService {
-  private apiUrlProdutos = 'http://localhost:8080/api/produtos';
-  private apiUrlCategorias = 'http://localhost:8080/api/categorias';
+  private apiUrlProdutos = 'http://api-igor.187.33.201.107.sslip.io/api/produtos';
+  private apiUrlCategorias = 'http://api-igor.187.33.201.107.sslip.io/api/categorias';
 
   constructor(private http: HttpClient) {}
 

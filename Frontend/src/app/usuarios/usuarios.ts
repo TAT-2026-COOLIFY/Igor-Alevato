@@ -19,7 +19,7 @@ export class Usuarios implements OnInit {
   // Controla a visualização da senha no formulário
   mostrarSenha = false;
 
-  private apiUrl = 'http://localhost:8080/api/usuarios';
+  private apiUrl = 'http://api-igor.187.33.201.107.sslip.io/api/usuarios';
 
   constructor(
     private http: HttpClient,

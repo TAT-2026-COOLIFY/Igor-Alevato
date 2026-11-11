@@ -28,7 +28,7 @@ export class VisaoGeral implements OnInit {
   // Referência da instância do Chart.js
   meuGrafico: any;
 
-  private apiBase = 'http://localhost:8080/api';
+  private apiBase = 'http://api-igor.187.33.201.107.sslip.io/api';
 
   constructor(
     private http: HttpClient,

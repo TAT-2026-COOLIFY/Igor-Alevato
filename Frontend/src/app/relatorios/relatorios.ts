@@ -14,7 +14,7 @@ export class Relatorios implements OnInit {
   // Armazena a lista de movimentações de entrada e saída
   movimentacoes: any[] = [];
 
-  private apiUrl = 'http://localhost:8080/api/movimentacoes';
+  private apiUrl = 'http://api-igor.187.33.201.107.sslip.io/api/movimentacoes';
 
   constructor(
     private http: HttpClient,

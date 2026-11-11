@@ -34,7 +34,7 @@ export class Movimentacoes implements OnInit {
   mensagemNotificacao: string = '';
   tipoNotificacao: 'success' | 'danger' = 'success';
 
-  private apiMovimentacoes = 'http://localhost:8080/api/movimentacoes';
+  private apiMovimentacoes = 'http://api-igor.187.33.201.107.sslip.io/api/movimentacoes';
 
   constructor(
     private produtoService: ProdutoService,
